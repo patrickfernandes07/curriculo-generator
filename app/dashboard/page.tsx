@@ -31,7 +31,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      
       <header className="bg-white border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold">Meus Currículos</h1>
@@ -48,7 +48,7 @@ export default async function DashboardPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Boas-vindas */}
+        
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">
             Olá, {user.user_metadata?.name || user.email}! 👋
@@ -58,7 +58,7 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        {/* Botão criar novo */}
+        
         <div className="mb-6">
           <Link href="/dashboard/new">
             <Button size="lg">
@@ -68,7 +68,7 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        {/* Lista de currículos */}
+        
         {error && (
           <div className="p-4 bg-red-50 text-red-600 rounded-md mb-6">
             Erro ao carregar currículos: {error.message}

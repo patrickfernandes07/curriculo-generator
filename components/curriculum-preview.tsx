@@ -1,8 +1,6 @@
 "use client";
 
 import { CurriculumData } from "@/types/curriculum";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Phone, MapPin, Linkedin, Globe } from "lucide-react";
 
@@ -36,7 +34,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
         color: "#000000"
       }}
     >
-      {/* Header com foto */}
+      
       <div className="mb-6 flex gap-6">
         <div className="flex-1">
           <h1 className="text-4xl font-bold mb-2" style={{ color: "#000000" }}>
@@ -80,7 +78,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
           </div>
         </div>
 
-        {/* Foto */}
+        
         {data.personalInfo.photo && (
           <div className="flex-shrink-0">
             <img
@@ -93,7 +91,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
         )}
       </div>
 
-      {/* Summary */}
+      
       {data.personalInfo.summary && (
         <>
           <Separator className="my-4" style={{ backgroundColor: "#e5e7eb" }} />
@@ -108,7 +106,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
         </>
       )}
 
-      {/* Experience */}
+      
       {data.experiences.length > 0 && (
         <>
           <Separator className="my-4" style={{ backgroundColor: "#e5e7eb" }} />
@@ -144,7 +142,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
         </>
       )}
 
-      {/* Education */}
+      
       {data.education.length > 0 && (
         <>
           <Separator className="my-4" style={{ backgroundColor: "#e5e7eb" }} />
@@ -175,7 +173,7 @@ export function CurriculumPreview({ data }: CurriculumPreviewProps) {
         </>
       )}
 
-      {/* Skills */}
+      
       {data.skills.length > 0 && (
         <>
           <Separator className="my-4" style={{ backgroundColor: "#e5e7eb" }} />

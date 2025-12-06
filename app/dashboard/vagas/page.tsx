@@ -31,7 +31,7 @@ export default async function VagasPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      
       <header className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
@@ -47,7 +47,7 @@ export default async function VagasPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Introdução */}
+        
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">
             Encontre sua próxima oportunidade 💼
@@ -57,7 +57,7 @@ export default async function VagasPage() {
           </p>
         </div>
 
-        {/* Lista de vagas */}
+        
         {error && (
           <div className="p-4 bg-red-50 text-red-600 rounded-md mb-6">
             Erro ao carregar vagas: {error.message}
@@ -95,7 +95,7 @@ export default async function VagasPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {/* Informações básicas */}
+                    
                     <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
@@ -116,7 +116,7 @@ export default async function VagasPage() {
                       </div>
                     </div>
 
-                    {/* Descrição */}
+                    
                     <div>
                       <h4 className="font-semibold mb-1">Descrição:</h4>
                       <p className="text-gray-700 text-sm">
@@ -124,7 +124,7 @@ export default async function VagasPage() {
                       </p>
                     </div>
 
-                    {/* Requisitos */}
+                    
                     <div>
                       <h4 className="font-semibold mb-1">Requisitos:</h4>
                       <p className="text-gray-700 text-sm">
@@ -132,7 +132,7 @@ export default async function VagasPage() {
                       </p>
                     </div>
 
-                    {/* Botões de ação */}
+                    
                     <div className="flex gap-2 pt-2">
                       <Link
                         href={`/dashboard/vagas/${vaga.id}`}

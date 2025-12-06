@@ -202,7 +202,6 @@ export function EditCurriculumForm({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Formulário */}
         <div>
           <Card>
             <CardHeader>
@@ -270,7 +269,6 @@ export function EditCurriculumForm({
               </Tabs>
 
               <div className="mt-6 space-y-4">
-                {/* Análise com IA */}
                 <Button
                   onClick={analyzeCurriculum}
                   variant="secondary"
@@ -281,7 +279,6 @@ export function EditCurriculumForm({
                   {analyzing ? "Analisando..." : "Analisar com IA"}
                 </Button>
 
-                {/* Resultado da análise */}
                 {analysis && (
                   <Card className="bg-blue-50 border-blue-200">
                     <CardContent className="pt-6">
@@ -324,7 +321,6 @@ export function EditCurriculumForm({
                   </Card>
                 )}
 
-                {/* Botões de ação */}
                 <div className="flex flex-wrap gap-2">
                   <Button
                     onClick={updateCurriculum}
@@ -358,7 +354,6 @@ export function EditCurriculumForm({
           </Card>
         </div>
 
-        {/* Preview */}
         <div className="lg:sticky lg:top-8 lg:self-start">
           <Card>
             <CardHeader>

@@ -47,7 +47,7 @@ export default async function VagaDetalhesPage({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      
       <header className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
@@ -63,7 +63,7 @@ export default async function VagaDetalhesPage({
       </header>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Informações da vaga */}
+        
         <Card className="mb-6">
           <CardHeader>
             <div className="flex justify-between items-start mb-4">
@@ -101,7 +101,7 @@ export default async function VagaDetalhesPage({
           </CardHeader>
 
           <CardContent className="space-y-6">
-            {/* Descrição */}
+            
             <div>
               <h3 className="font-bold text-lg mb-2">Descrição da Vaga</h3>
               <p className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -109,7 +109,7 @@ export default async function VagaDetalhesPage({
               </p>
             </div>
 
-            {/* Requisitos */}
+            
             <div>
               <h3 className="font-bold text-lg mb-2">Requisitos</h3>
               <p className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -117,7 +117,7 @@ export default async function VagaDetalhesPage({
               </p>
             </div>
 
-            {/* Botão de candidatura */}
+            
             <div className="pt-4">
               
                 <a href={`mailto:${vaga.contact_email}?subject=Candidatura para ${vaga.title}&body=Olá,%0D%0A%0D%0AGostaria de me candidatar para a vaga de ${vaga.title}.%0D%0A%0D%0AAtenciosamente.`}
@@ -131,7 +131,7 @@ export default async function VagaDetalhesPage({
           </CardContent>
         </Card>
 
-        {/* Análise de Match com IA */}
+        
         {curriculums && curriculums.length > 0 && (
           <VagaMatchAnalysis vaga={vaga} curriculums={curriculums} />
         )}

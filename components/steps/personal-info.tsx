@@ -87,7 +87,6 @@ export function PersonalInfoStep({ data, onChange }: PersonalInfoStepProps) {
 
   return (
     <div className="space-y-4">
-      {/* Foto */}
       <div>
         <Label>Foto (Opcional)</Label>
         <div className="flex items-start gap-4 mt-2">

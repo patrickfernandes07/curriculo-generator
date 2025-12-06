@@ -155,7 +155,6 @@ export function VagaMatchAnalysis({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Seletor de currículo */}
         <div>
           <label className="text-sm font-medium mb-2 block">
             Selecione um currículo:
@@ -178,7 +177,6 @@ export function VagaMatchAnalysis({
           </Select>
         </div>
 
-        {/* Botão de análise */}
         <Button
           onClick={analyzeMatch}
           disabled={analyzing || !selectedCurriculumId}
@@ -188,10 +186,8 @@ export function VagaMatchAnalysis({
           {analyzing ? "Analisando..." : "Analisar Compatibilidade"}
         </Button>
 
-        {/* Resultado */}
         {matchResult && (
           <div className="mt-6 space-y-4">
-            {/* Score */}
             <div className="bg-white rounded-lg p-6 text-center shadow-md">
               <div className="text-5xl font-bold text-purple-600 mb-2">
                 {matchResult.score}%
@@ -201,7 +197,6 @@ export function VagaMatchAnalysis({
               </div>
             </div>
 
-            {/* Habilidades que combinam */}
             {matchResult.matchedSkills &&
               matchResult.matchedSkills.length > 0 && (
                 <div className="bg-white rounded-lg p-4 shadow-md">
@@ -222,7 +217,6 @@ export function VagaMatchAnalysis({
                 </div>
               )}
 
-            {/* Habilidades faltando */}
             {matchResult.missingSkills &&
               matchResult.missingSkills.length > 0 && (
                 <div className="bg-white rounded-lg p-4 shadow-md">
@@ -243,7 +237,6 @@ export function VagaMatchAnalysis({
                 </div>
               )}
 
-            {/* Recomendação */}
             <div className="bg-white rounded-lg p-4 shadow-md">
               <h4 className="font-semibold mb-2 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-purple-600" />

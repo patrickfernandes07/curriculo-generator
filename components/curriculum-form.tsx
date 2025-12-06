@@ -150,7 +150,6 @@ export function CurriculumForm() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Formulário */}
         <div>
           <Card>
             <CardHeader>
@@ -251,7 +250,6 @@ export function CurriculumForm() {
           </Card>
         </div>
 
-        {/* Preview */}
         <div className="lg:sticky lg:top-8 lg:self-start">
           <Card>
             <CardHeader>
