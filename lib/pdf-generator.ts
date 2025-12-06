@@ -17,7 +17,6 @@ export const generatePDF = (
   const contentWidth = pageWidth - leftMargin * 2;
   const lineHeight = 5;
 
-  // Configurar posição inicial considerando a foto
   const photoWidth = 30;
   const photoHeight = 30;
   const hasPhoto = !!data.personalInfo.photo;
@@ -25,7 +24,6 @@ export const generatePDF = (
     ? contentWidth - photoWidth - 10
     : contentWidth;
 
-  // Função auxiliar para verificar se precisa de nova página
   const checkNewPage = (spaceNeeded: number = 20) => {
     if (yPos + spaceNeeded > 280) {
       pdf.addPage();
@@ -35,14 +33,12 @@ export const generatePDF = (
     return false;
   };
 
-  // Função para formatar data
   const formatDate = (date: string) => {
     if (!date) return "";
     const [year, month] = date.split("-");
     return `${month}/${year}`;
   };
 
-  // ===== FOTO (se houver) =====
   if (hasPhoto) {
     try {
       pdf.addImage(
@@ -60,7 +56,6 @@ export const generatePDF = (
     }
   }
 
-  // ===== CABEÇALHO - Nome =====
   pdf.setFontSize(24);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(0, 0, 0);
@@ -71,7 +66,6 @@ export const generatePDF = (
   pdf.text(nameLines, leftMargin, yPos);
   yPos += nameLines.length * 8;
 
-  // ===== CONTATOS =====
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(107, 114, 128);
@@ -100,14 +94,12 @@ export const generatePDF = (
     yPos += contactLines2.length * lineHeight;
   }
 
-  // Garantir que passamos da área da foto
   if (hasPhoto && yPos < 20 + photoHeight + 5) {
     yPos = 20 + photoHeight + 5;
   }
 
   yPos += 5;
 
-  // ===== RESUMO PROFISSIONAL =====
   if (data.personalInfo.summary) {
     checkNewPage(30);
 
@@ -132,7 +124,6 @@ export const generatePDF = (
     yPos += summaryLines.length * lineHeight + 5;
   }
 
-  // ===== EXPERIÊNCIA PROFISSIONAL =====
   if (data.experiences.length > 0) {
     checkNewPage(30);
 
@@ -182,7 +173,6 @@ export const generatePDF = (
     });
   }
 
-  // ===== FORMAÇÃO ACADÊMICA =====
   if (data.education.length > 0) {
     checkNewPage(30);
 
@@ -222,7 +212,6 @@ export const generatePDF = (
     });
   }
 
-  // ===== HABILIDADES =====
   if (data.skills.length > 0) {
     checkNewPage(30);
 

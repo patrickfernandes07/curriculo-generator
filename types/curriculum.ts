@@ -6,7 +6,7 @@ export interface PersonalInfo {
   linkedIn?: string;
   portfolio?: string;
   summary: string;
-  photo?: string; // Base64 da imagem
+  photo?: string;
 }
 
 export interface Experience {
@@ -42,7 +42,6 @@ export interface CurriculumData {
   skills: Skill[];
 }
 
-// Novo: Tipo do currículo no banco de dados
 export interface CurriculumDB {
   id: string;
   user_id: string;
@@ -71,7 +70,6 @@ export interface CurriculumDB {
   updated_at: string;
 }
 
-// Função helper para converter CurriculumData para formato do DB
 export function curriculumToDb(data: CurriculumData): Partial<CurriculumDB> {
   return {
     full_name: data.personalInfo.fullName,
@@ -88,7 +86,6 @@ export function curriculumToDb(data: CurriculumData): Partial<CurriculumDB> {
   };
 }
 
-// Função helper para converter formato do DB para CurriculumData
 export function dbToCurriculum(db: CurriculumDB): CurriculumData {
   return {
     personalInfo: {

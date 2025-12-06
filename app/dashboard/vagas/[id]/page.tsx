@@ -29,7 +29,6 @@ export default async function VagaDetalhesPage({
     redirect("/login");
   }
 
-  // Buscar vaga
   const { data: vaga, error } = await supabase
     .from("job_vacancies")
     .select("*")
@@ -40,7 +39,6 @@ export default async function VagaDetalhesPage({
     redirect("/dashboard/vagas");
   }
 
-  // Buscar currículos do usuário
   const { data: curriculums } = await supabase
     .from("curriculums")
     .select("*")

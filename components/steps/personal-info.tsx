@@ -28,13 +28,11 @@ export function PersonalInfoStep({ data, onChange }: PersonalInfoStepProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validar tipo de arquivo
     if (!file.type.startsWith("image/")) {
       alert("Por favor, selecione apenas arquivos de imagem.");
       return;
     }
 
-    // Validar tamanho (máx 2MB)
     if (file.size > 2 * 1024 * 1024) {
       alert("A imagem deve ter no máximo 2MB.");
       return;

@@ -1,9 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { callGemini } from "@/lib/gemini";
 
+type ImproveTextType = "summary" | "experience";
+
+interface ImproveTextRequest {
+  text: string;
+  type: ImproveTextType;
+}
+
+interface ErrorWithMessage {
+  message: string;
+}
+
+function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof (error as Record<string, unknown>).message === "string"
+  );
+}
+
+function getErrorMessage(error: unknown): string {
+  if (isErrorWithMessage(error)) {
+    return error.message;
+  }
+  return "Erro desconhecido";
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { text, type } = await request.json();
+    const body = (await request.json()) as ImproveTextRequest;
+    const { text, type } = body;
 
     let prompt = "";
 
@@ -41,16 +69,15 @@ Retorne APENAS o texto melhorado, sem explicações, sem aspas, sem prefixos.
 
     const improvedText = await callGemini(prompt);
 
-    // Remover aspas se houver
     const cleanText = improvedText.trim().replace(/^["']|["']$/g, "");
 
     return NextResponse.json({ improvedText: cleanText });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao melhorar texto:", error);
     return NextResponse.json(
       {
         error: "Erro ao melhorar texto",
-        details: error.message,
+        details: getErrorMessage(error),
       },
       { status: 500 }
     );

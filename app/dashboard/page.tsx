@@ -23,7 +23,6 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Buscar currículos do usuário
   const { data: curriculums, error } = await supabase
     .from("curriculums")
     .select("*")

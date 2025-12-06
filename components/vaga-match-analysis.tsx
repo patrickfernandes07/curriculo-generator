@@ -16,12 +16,75 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { Sparkles, CheckCircle2, AlertCircle } from "lucide-react";
 import { dbToCurriculum } from "@/types/curriculum";
 
+
+interface Vaga {
+  id: string;
+  title: string;
+  description: string;
+  requirements: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
+interface DbCurriculum {
+  id: string;
+  user_id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  location: string;
+  linkedin: string;
+  portfolio: string;
+  summary: string;
+  experiences: unknown;
+  education: unknown;
+  skills: unknown;
+  ai_score: number | null;
+  ai_suggestions: unknown;
+  created_at: string;
+  updated_at: string;
+}
+
+
+interface MatchResult {
+  score: number;
+  matchedSkills: string[];
+  missingSkills: string[];
+  recommendation: string;
+}
+
+
+function isValidMatchResult(data: unknown): data is MatchResult {
+  if (typeof data !== "object" || data === null) return false;
+
+  const obj = data as Record<string, unknown>;
+
+  return (
+    typeof obj.score === "number" &&
+    Array.isArray(obj.matchedSkills) &&
+    obj.matchedSkills.every((item) => typeof item === "string") &&
+    Array.isArray(obj.missingSkills) &&
+    obj.missingSkills.every((item) => typeof item === "string") &&
+    typeof obj.recommendation === "string"
+  );
+}
+
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Erro desconhecido";
+}
+
 interface VagaMatchAnalysisProps {
-  vaga: any;
-  curriculums: any[];
+  vaga: Vaga;
+  curriculums: DbCurriculum[];
 }
 
 export function VagaMatchAnalysis({
@@ -30,7 +93,7 @@ export function VagaMatchAnalysis({
 }: VagaMatchAnalysisProps) {
   const [selectedCurriculumId, setSelectedCurriculumId] = useState<string>("");
   const [analyzing, setAnalyzing] = useState(false);
-  const [matchResult, setMatchResult] = useState<any>(null);
+  const [matchResult, setMatchResult] = useState<MatchResult | null>(null);
 
   const analyzeMatch = async () => {
     if (!selectedCurriculumId) {
@@ -42,6 +105,11 @@ export function VagaMatchAnalysis({
 
     try {
       const curriculum = curriculums.find((c) => c.id === selectedCurriculumId);
+      
+      if (!curriculum) {
+        throw new Error("Currículo não encontrado");
+      }
+
       const curriculumData = dbToCurriculum(curriculum);
 
       const response = await fetch("/api/ai/match", {
@@ -59,11 +127,17 @@ export function VagaMatchAnalysis({
 
       if (!response.ok) throw new Error("Erro ao analisar match");
 
-      const result = await response.json();
+      const result: unknown = await response.json();
+
+      
+      if (!isValidMatchResult(result)) {
+        throw new Error("Resposta da API com formato inválido");
+      }
+
       setMatchResult(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      alert("Erro ao analisar compatibilidade: " + error.message);
+      alert("Erro ao analisar compatibilidade: " + getErrorMessage(error));
     } finally {
       setAnalyzing(false);
     }
@@ -136,7 +210,7 @@ export function VagaMatchAnalysis({
                     Habilidades que Você Possui ({matchResult.matchedSkills.length})
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {matchResult.matchedSkills.map((skill: string, i: number) => (
+                    {matchResult.matchedSkills.map((skill, i) => (
                       <span
                         key={i}
                         className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm"
@@ -157,7 +231,7 @@ export function VagaMatchAnalysis({
                     Habilidades Desejáveis ({matchResult.missingSkills.length})
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {matchResult.missingSkills.map((skill: string, i: number) => (
+                    {matchResult.missingSkills.map((skill, i) => (
                       <span
                         key={i}
                         className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm"

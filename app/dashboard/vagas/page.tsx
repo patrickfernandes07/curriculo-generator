@@ -23,7 +23,6 @@ export default async function VagasPage() {
     redirect("/login");
   }
 
-  // Buscar vagas ativas
   const { data: vagas, error } = await supabase
     .from("job_vacancies")
     .select("*")

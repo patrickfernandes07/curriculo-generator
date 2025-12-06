@@ -1,30 +1,53 @@
 import { NextResponse } from "next/server";
 import { callGemini } from "@/lib/gemini";
 
+interface SuccessResponse {
+  success: true;
+  message: string;
+  response: string;
+}
+
+interface ErrorResponse {
+  success: false;
+  error: string;
+}
+
+type TestResponse = SuccessResponse | ErrorResponse;
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Erro desconhecido";
+}
+
 export async function GET() {
   try {
     if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({
+      const response: ErrorResponse = {
         success: false,
         error: "GEMINI_API_KEY não encontrada no .env.local",
-      });
+      };
+      return NextResponse.json(response);
     }
 
     const result = await callGemini("Responda apenas: OK");
 
-    return NextResponse.json({
+    const response: SuccessResponse = {
       success: true,
       message: "API Gemini funcionando!",
       response: result,
-    });
-  } catch (error: any) {
+    };
+
+    return NextResponse.json(response);
+  } catch (error: unknown) {
     console.error("Erro ao testar Gemini:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
-      { status: 500 }
-    );
+
+    const response: ErrorResponse = {
+      success: false,
+      error: getErrorMessage(error),
+    };
+
+    return NextResponse.json(response, { status: 500 });
   }
 }

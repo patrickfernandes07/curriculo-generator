@@ -36,6 +36,20 @@ const initialData: CurriculumData = {
   skills: [],
 };
 
+interface Tab {
+  value: string;
+  label: string;
+  icon: string;
+}
+
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Erro desconhecido";
+}
+
 export function CurriculumForm() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("personal");
@@ -43,12 +57,13 @@ export function CurriculumForm() {
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // Carregar dados do localStorage ao montar o componente
+  
   useEffect(() => {
     const savedData = localStorage.getItem("curriculumData");
     if (savedData) {
       try {
-        setCurriculumData(JSON.parse(savedData));
+        const parsedData = JSON.parse(savedData) as CurriculumData;
+        setCurriculumData(parsedData);
         setIsSaved(true);
       } catch (error) {
         console.error("Error loading saved data:", error);
@@ -56,21 +71,21 @@ export function CurriculumForm() {
     }
   }, []);
 
-  // Salvar no localStorage
+  
   const saveToLocalStorage = () => {
     localStorage.setItem("curriculumData", JSON.stringify(curriculumData));
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
   };
 
-  // Salvar no banco de dados
+  
   const saveToDatabase = async () => {
     setSaving(true);
     
     try {
       const supabase = createClient();
       
-      // Verificar se usuário está logado
+      
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -79,10 +94,10 @@ export function CurriculumForm() {
         return;
       }
 
-      // Converter dados para formato do banco
+      
       const dbData = curriculumToDb(curriculumData);
 
-      // Inserir no banco
+      
       const { data, error } = await supabase
         .from("curriculums")
         .insert({
@@ -96,20 +111,20 @@ export function CurriculumForm() {
 
       alert("Currículo salvo com sucesso!");
       
-      // Limpar localStorage
+      
       localStorage.removeItem("curriculumData");
       
-      // Redirecionar para o dashboard
+      
       router.push("/dashboard");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao salvar:", error);
-      alert("Erro ao salvar currículo: " + error.message);
+      alert("Erro ao salvar currículo: " + getErrorMessage(error));
     } finally {
       setSaving(false);
     }
   };
 
-  // Limpar dados
+  
   const clearData = () => {
     if (confirm("Tem certeza que deseja limpar todos os dados?")) {
       setCurriculumData(initialData);
@@ -117,7 +132,7 @@ export function CurriculumForm() {
     }
   };
 
-  // Gerar PDF
+  
   const handleGeneratePDF = () => {
     generatePDF(
       curriculumData,
@@ -125,7 +140,7 @@ export function CurriculumForm() {
     );
   };
 
-  const tabs = [
+  const tabs: Tab[] = [
     { value: "personal", label: "Dados Pessoais", icon: "👤" },
     { value: "experience", label: "Experiência", icon: "💼" },
     { value: "education", label: "Formação", icon: "🎓" },

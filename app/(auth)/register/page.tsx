@@ -29,7 +29,7 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    // Validações
+    
     if (password !== confirmPassword) {
       setError("As senhas não coincidem");
       setLoading(false);
@@ -58,7 +58,7 @@ export default function RegisterPage() {
       setError(error.message);
       setLoading(false);
     } else {
-      // Redirecionar para dashboard
+      
       router.push("/dashboard");
       router.refresh();
     }

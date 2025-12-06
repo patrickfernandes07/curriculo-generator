@@ -42,7 +42,6 @@ export function SkillsStep({ data, onChange }: SkillsStepProps) {
     }
   };
 
-  // Agrupar habilidades por categoria
   const groupedSkills = data.reduce((acc, skill) => {
     const category = skill.category || "Geral";
     if (!acc[category]) {

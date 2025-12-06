@@ -30,7 +30,11 @@ export function EducationStep({ data, onChange }: EducationStepProps) {
     onChange(data.filter((edu) => edu.id !== id));
   };
 
-  const updateEducation = (id: string, field: keyof Education, value: any) => {
+  const updateEducation = <K extends keyof Education>(
+    id: string,
+    field: K,
+    value: Education[K]
+  ) => {
     onChange(
       data.map((edu) =>
         edu.id === id ? { ...edu, [field]: value } : edu
@@ -52,7 +56,7 @@ export function EducationStep({ data, onChange }: EducationStepProps) {
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">
-              Nenhuma formação adicionada. Clique em "Adicionar Formação" para começar.
+              Nenhuma formação adicionada. Clique em Adicionar Formação para começar.
             </p>
           </CardContent>
         </Card>

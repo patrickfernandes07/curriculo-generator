@@ -1,6 +1,74 @@
 import { NextRequest, NextResponse } from "next/server";
 import { callGemini } from "@/lib/gemini";
 
+interface PersonalInfo {
+  fullName: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  summary?: string;
+}
+
+interface Experience {
+  position: string;
+  company: string;
+  startDate: string;
+  endDate?: string;
+  current?: boolean;
+  description?: string;
+}
+
+interface Education {
+  degree: string;
+  field: string;
+  institution: string;
+  startDate: string;
+  endDate?: string;
+  current?: boolean;
+}
+
+interface Skill {
+  name: string;
+  category: string;
+}
+
+interface Curriculum {
+  personalInfo: PersonalInfo;
+  experiences?: Experience[];
+  education?: Education[];
+  skills?: Skill[];
+}
+
+interface CurriculumAnalysis {
+  score: number;
+  suggestions: string[];
+  strengths: string[];
+  weaknesses: string[];
+}
+
+function isValidAnalysis(data: unknown): data is CurriculumAnalysis {
+  if (typeof data !== "object" || data === null) return false;
+
+  const obj = data as Record<string, unknown>;
+
+  return (
+    typeof obj.score === "number" &&
+    Array.isArray(obj.suggestions) &&
+    obj.suggestions.every((item) => typeof item === "string") &&
+    Array.isArray(obj.strengths) &&
+    obj.strengths.every((item) => typeof item === "string") &&
+    Array.isArray(obj.weaknesses) &&
+    obj.weaknesses.every((item) => typeof item === "string")
+  );
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Erro desconhecido";
+}
+
 export async function POST(request: NextRequest) {
   try {
     if (!process.env.GEMINI_API_KEY) {
@@ -10,7 +78,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const curriculum = await request.json();
+    const curriculum = (await request.json()) as Curriculum;
 
     if (!curriculum.personalInfo || !curriculum.personalInfo.fullName) {
       return NextResponse.json(
@@ -55,7 +123,7 @@ ${
   curriculum.experiences && curriculum.experiences.length > 0
     ? curriculum.experiences
         .map(
-          (exp: any) => `
+          (exp: Experience) => `
 - ${exp.position} na ${exp.company}
   Período: ${exp.startDate} até ${exp.current ? "Presente" : exp.endDate}
   Descrição: ${exp.description || "Não informada"}
@@ -70,7 +138,7 @@ ${
   curriculum.education && curriculum.education.length > 0
     ? curriculum.education
         .map(
-          (edu: any) => `
+          (edu: Education) => `
 - ${edu.degree} em ${edu.field}
   Instituição: ${edu.institution}
   Período: ${edu.startDate} até ${edu.current ? "Presente" : edu.endDate}
@@ -84,7 +152,7 @@ Habilidades:
 ${
   curriculum.skills && curriculum.skills.length > 0
     ? curriculum.skills
-        .map((skill: any) => `- ${skill.name} (${skill.category})`)
+        .map((skill: Skill) => `- ${skill.name} (${skill.category})`)
         .join("\n")
     : "Nenhuma habilidade informada"
 }
@@ -107,13 +175,10 @@ IMPORTANTE: Retorne APENAS o JSON, sem nenhum texto antes, depois ou ao redor. N
 
     console.log("Resposta do Gemini:", text);
 
-    // Tentar extrair JSON da resposta
     let jsonText = text.trim();
 
-    // Remover markdown se houver
     jsonText = jsonText.replace(/```json\n?/g, "").replace(/```\n?/g, "");
 
-    // Encontrar o JSON
     const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       console.error("JSON não encontrado na resposta:", text);
@@ -126,31 +191,27 @@ IMPORTANTE: Retorne APENAS o JSON, sem nenhum texto antes, depois ou ao redor. N
       );
     }
 
-    const analysis = JSON.parse(jsonMatch[0]);
+    const parsedData: unknown = JSON.parse(jsonMatch[0]);
 
-    // Validar estrutura
-    if (
-      typeof analysis.score !== "number" ||
-      !Array.isArray(analysis.suggestions) ||
-      !Array.isArray(analysis.strengths) ||
-      !Array.isArray(analysis.weaknesses)
-    ) {
-      console.error("Estrutura do JSON inválida:", analysis);
+    if (!isValidAnalysis(parsedData)) {
+      console.error("Estrutura do JSON inválida:", parsedData);
       return NextResponse.json(
         { error: "Estrutura do JSON retornado é inválida" },
         { status: 500 }
       );
     }
 
+    const analysis: CurriculumAnalysis = parsedData;
+
     console.log("Análise concluída com sucesso:", analysis);
 
     return NextResponse.json(analysis);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro na análise:", error);
     return NextResponse.json(
       {
         error: "Erro ao analisar currículo",
-        details: error.message,
+        details: getErrorMessage(error),
       },
       { status: 500 }
     );

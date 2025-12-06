@@ -19,7 +19,6 @@ export default async function PreviewCurriculumPage({
     redirect("/login");
   }
 
-  // Buscar currículo
   const { data: curriculum, error } = await supabase
     .from("curriculums")
     .select("*")
@@ -31,7 +30,6 @@ export default async function PreviewCurriculumPage({
     redirect("/dashboard");
   }
 
-  // Converter para formato do formulário
   const curriculumData = dbToCurriculum(curriculum);
 
   return <PreviewCurriculum data={curriculumData} />;

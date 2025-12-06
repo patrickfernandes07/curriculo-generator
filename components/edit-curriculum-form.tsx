@@ -26,6 +26,45 @@ interface EditCurriculumFormProps {
   initialData: CurriculumData;
 }
 
+interface Tab {
+  value: string;
+  label: string;
+  icon: string;
+}
+
+
+interface CurriculumAnalysis {
+  score: number;
+  strengths: string[];
+  weaknesses: string[];
+  suggestions: string[];
+}
+
+
+function isValidAnalysis(data: unknown): data is CurriculumAnalysis {
+  if (typeof data !== "object" || data === null) return false;
+
+  const obj = data as Record<string, unknown>;
+
+  return (
+    typeof obj.score === "number" &&
+    Array.isArray(obj.strengths) &&
+    obj.strengths.every((item) => typeof item === "string") &&
+    Array.isArray(obj.weaknesses) &&
+    obj.weaknesses.every((item) => typeof item === "string") &&
+    Array.isArray(obj.suggestions) &&
+    obj.suggestions.every((item) => typeof item === "string")
+  );
+}
+
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Erro desconhecido";
+}
+
 export function EditCurriculumForm({
   curriculumId,
   initialData,
@@ -36,9 +75,9 @@ export function EditCurriculumForm({
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<any>(null);
+  const [analysis, setAnalysis] = useState<CurriculumAnalysis | null>(null);
 
-  // Analisar com IA
+  
   const analyzeCurriculum = async () => {
     setAnalyzing(true);
 
@@ -51,10 +90,16 @@ export function EditCurriculumForm({
 
       if (!response.ok) throw new Error("Erro ao analisar");
 
-      const result = await response.json();
+      const result: unknown = await response.json();
+
+      
+      if (!isValidAnalysis(result)) {
+        throw new Error("Resposta da IA com formato inválido");
+      }
+
       setAnalysis(result);
 
-      // Salvar o score no banco
+      
       const supabase = createClient();
       await supabase
         .from("curriculums")
@@ -64,25 +109,25 @@ export function EditCurriculumForm({
         })
         .eq("id", curriculumId);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      alert("Erro ao analisar currículo: " + error.message);
+      alert("Erro ao analisar currículo: " + getErrorMessage(error));
     } finally {
       setAnalyzing(false);
     }
   };
 
-  // Atualizar no banco de dados
+  
   const updateCurriculum = async () => {
     setSaving(true);
 
     try {
       const supabase = createClient();
 
-      // Converter dados para formato do banco
+      
       const dbData = curriculumToDb(curriculumData);
 
-      // Atualizar no banco
+      
       const { error } = await supabase
         .from("curriculums")
         .update({
@@ -96,15 +141,15 @@ export function EditCurriculumForm({
       alert("Currículo atualizado com sucesso!");
       router.push("/dashboard");
       router.refresh();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao atualizar:", error);
-      alert("Erro ao atualizar currículo: " + error.message);
+      alert("Erro ao atualizar currículo: " + getErrorMessage(error));
     } finally {
       setSaving(false);
     }
   };
 
-  // Deletar currículo
+  
   const deleteCurriculum = async () => {
     if (!confirm("Tem certeza que deseja excluir este currículo?")) {
       return;
@@ -125,14 +170,14 @@ export function EditCurriculumForm({
       alert("Currículo excluído com sucesso!");
       router.push("/dashboard");
       router.refresh();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao excluir:", error);
-      alert("Erro ao excluir currículo: " + error.message);
+      alert("Erro ao excluir currículo: " + getErrorMessage(error));
       setDeleting(false);
     }
   };
 
-  // Gerar PDF
+  
   const handleGeneratePDF = () => {
     generatePDF(
       curriculumData,
@@ -140,7 +185,7 @@ export function EditCurriculumForm({
     );
   };
 
-  const tabs = [
+  const tabs: Tab[] = [
     { value: "personal", label: "Dados Pessoais", icon: "👤" },
     { value: "experience", label: "Experiência", icon: "💼" },
     { value: "education", label: "Formação", icon: "🎓" },
@@ -251,7 +296,7 @@ export function EditCurriculumForm({
                         <div>
                           <h4 className="font-semibold mb-2 text-green-700">✓ Pontos Fortes:</h4>
                           <ul className="list-disc pl-5 space-y-1 text-sm">
-                            {analysis.strengths.map((s: string, i: number) => (
+                            {analysis.strengths.map((s, i) => (
                               <li key={i}>{s}</li>
                             ))}
                           </ul>
@@ -260,7 +305,7 @@ export function EditCurriculumForm({
                         <div>
                           <h4 className="font-semibold mb-2 text-orange-700">⚠ Pontos a Melhorar:</h4>
                           <ul className="list-disc pl-5 space-y-1 text-sm">
-                            {analysis.weaknesses.map((w: string, i: number) => (
+                            {analysis.weaknesses.map((w, i) => (
                               <li key={i}>{w}</li>
                             ))}
                           </ul>
@@ -269,7 +314,7 @@ export function EditCurriculumForm({
                         <div>
                           <h4 className="font-semibold mb-2 text-blue-700">💡 Sugestões:</h4>
                           <ul className="list-disc pl-5 space-y-1 text-sm">
-                            {analysis.suggestions.map((s: string, i: number) => (
+                            {analysis.suggestions.map((s, i) => (
                               <li key={i}>{s}</li>
                             ))}
                           </ul>

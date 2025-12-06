@@ -21,7 +21,7 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "noImplicitAny": false,  // ← Adicione esta linha
+    "noImplicitAny": false, 
     "strictNullChecks": false
   },
   "include": [
